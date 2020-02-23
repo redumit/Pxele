@@ -1,5 +1,8 @@
 import 'package:expenses/Pages/SallaryEdit.dart';
+import 'package:expenses/databaseHelper/salaryHelper.dart';
+import 'package:expenses/models/salary.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class Salary extends StatefulWidget {
   @override
@@ -7,14 +10,22 @@ class Salary extends StatefulWidget {
 }
 
 class _SalaryState extends State<Salary> {
+  SalaryHelper salaryHelper = new SalaryHelper();
+  List<SalaryModel> salaryList;
+  int count = 0;
+
   @override
   Widget build(BuildContext context) {
+    if (salaryList == null) {
+      salaryList = List<SalaryModel>();
+      updateListView();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("List of Salary Expenses"),
       ),
       body: ListView.builder(
-          itemCount: 3,
+          itemCount: count,
           itemBuilder: (BuildContext context, index) {
             return Column(
               children: <Widget>[
@@ -56,5 +67,18 @@ class _SalaryState extends State<Salary> {
         },
       ),
     );
+  }
+
+  void updateListView() {
+    final Future<Database> dbfuture = salaryHelper.initializeDatebase();
+    dbfuture.then((database) {
+      Future<List<SalaryModel>> salaryListFuture = salaryHelper.getSalaryMap();
+      salaryListFuture.then((salarylist){
+        setState(() {
+          this.salaryList = salarylist;
+          this.count = salarylist.length;
+        });
+      });
+    });
   }
 }
