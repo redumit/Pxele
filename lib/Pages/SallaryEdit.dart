@@ -17,7 +17,7 @@ class _SallaryEditState extends State<SallaryEdit> {
   final postioncontroller = TextEditingController();
 
   //radiobuttons
-  int _genderGroup = -1;
+  String _genderGroup = null;
 
   //Date Pickeer
   String _date = DateFormat.yMd().format(DateTime.now()).toString();
@@ -87,10 +87,9 @@ class _SallaryEditState extends State<SallaryEdit> {
                   child: TextFormField(
                     controller: empcontroller,
                     validator: (value) {
-                      if (value.isEmpty ) {
+                      if (value.isEmpty) {
                         return 'Employee is requierd';
-                      }
-                      else if(value.length<3){
+                      } else if (value.length < 3) {
                         return "Name must greater than 2 characters";
                       }
                       return null;
@@ -128,7 +127,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                             }
                             return null;
                           },
-                          onSaved: (value) => totalDay = double.parse(value),
+                          onSaved: (value) => totalDay = int.parse(value),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -145,14 +144,14 @@ class _SallaryEditState extends State<SallaryEdit> {
                     width: MediaQuery.of(context).size.width / 2.5,
                     child: TextFormField(
                       keyboardType: TextInputType.number,
-                      controller: taxcontroller,
+                      controller: ratePerDayController,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Tax is requierd';
+                          return 'Rate per day is requierd';
                         }
                         return null;
                       },
-                      onSaved: (value) => rate = value,
+                      onSaved: (value) => ratePerDay = int.parse(value),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -167,6 +166,7 @@ class _SallaryEditState extends State<SallaryEdit> {
               SizedBox(
                 height: ScreenUtil().setWidth(15),
               ),
+              //radio button
               Align(
                 alignment: Alignment.topLeft,
                 child: Column(
@@ -193,11 +193,11 @@ class _SallaryEditState extends State<SallaryEdit> {
                           Row(
                             children: <Widget>[
                               Radio(
-                                value: ' male',
-                                groupValue: _gender,
+                                value: "male",
+                                groupValue: _genderGroup,
                                 onChanged: (value) {
                                   setState(() {
-                                    _gender = value;
+                                    _genderGroup = value;
                                   });
                                 },
                               ),
@@ -207,11 +207,11 @@ class _SallaryEditState extends State<SallaryEdit> {
                           Row(
                             children: <Widget>[
                               Radio(
-                                value: ' female',
-                                groupValue: _gender,
+                                value: 'female',
+                                groupValue: _genderGroup,
                                 onChanged: (value) {
                                   setState(() {
-                                    _gender = value;
+                                    _genderGroup = value;
                                   });
                                 },
                               ),
@@ -227,6 +227,7 @@ class _SallaryEditState extends State<SallaryEdit> {
               SizedBox(
                 height: ScreenUtil().setWidth(15),
               ),
+              // job position
               Align(
                 alignment: Alignment.topLeft,
                 child: Container(
@@ -239,7 +240,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                       }
                       return null;
                     },
-                    onSaved: (value) => postion = value,
+                    onSaved: (value) => position = value,
                     decoration: InputDecoration(
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -254,6 +255,7 @@ class _SallaryEditState extends State<SallaryEdit> {
               SizedBox(
                 height: ScreenUtil().setWidth(15),
               ),
+              //Date
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -261,7 +263,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                     padding: EdgeInsets.all(ScreenUtil().setWidth(3)),
                     child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Service Date')),
+                        child: Text('Salary Date')),
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width / 2.3,
@@ -363,7 +365,5 @@ class _SallaryEditState extends State<SallaryEdit> {
     );
   }
 
-    void _submit(){
-
-    }
+  void _submit() {}
 }
