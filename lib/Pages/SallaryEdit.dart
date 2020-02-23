@@ -297,6 +297,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                   ),
                 ],
               ),
+              //buttons
               Padding(
                 padding: EdgeInsets.only(top: ScreenUtil().setWidth(30)),
                 child: Align(
