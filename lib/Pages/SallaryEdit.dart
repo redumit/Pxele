@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +10,7 @@ class SallaryEdit extends StatefulWidget {
 
 class _SallaryEditState extends State<SallaryEdit> {
   final _formkey2 = GlobalKey<FormState>();
+  static bool _autoValidate = false;
 
   //TextfieldForms
   final empcontroller = TextEditingController();
@@ -22,26 +24,53 @@ class _SallaryEditState extends State<SallaryEdit> {
   //Date Pickeer
   String _date = DateFormat.yMd().format(DateTime.now()).toString();
 
-  // total payment
-  int totalPayment = 0;
   //variables
   String empName, position;
-  int totalDay, ratePerDay;
+  static int totalDay, ratePerDay;
 
+  // total payment
+  int totalPayment;
+
+  //initialization
+  @override
+  initState() {
+    super.initState();
+    totalDaysController.addListener(_totalPayment);
+    ratePerDayController.addListener(_totalPayment);
+  }
+
+  //calculate total payment
+  void _totalPayment() {
+    setState(() {
+      try {
+        totalPayment = int.parse(totalDaysController.value.text, radix: 10,
+                onError: (value) {
+              if (value.runtimeType != int) {
+                print("value not string");
+              }
+            }) *
+            int.parse(ratePerDayController.value.text, onError: (value) {
+              if (value.runtimeType != int) {
+                print("value not string");
+              }
+            });
+      } catch (e) {
+        debugPrint(e);
+      }
+    });
+  }
+
+// input validator
   onsave() {
     final form = _formkey2.currentState;
     if (form.validate()) {
+      _formkey2.currentState.save();
       print('saved');
       _submit();
     } else {
-      return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text('empty fields'),
-          );
-        },
-      );
+      setState(() {
+        _autoValidate = true;
+      });
     }
   }
 
@@ -62,6 +91,7 @@ class _SallaryEditState extends State<SallaryEdit> {
             left: ScreenUtil().setSp(30), top: ScreenUtil().setSp(10)),
         //form
         child: Form(
+          autovalidate: _autoValidate,
           key: _formkey2,
           child: ListView(
             children: <Widget>[
@@ -124,10 +154,21 @@ class _SallaryEditState extends State<SallaryEdit> {
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Total day is requierd';
+                            } else if (int.parse(value) < 0) {
+                              return "total days should greater than 0";
+                            } else if (int.parse(value).isNaN) {
+                              return "Input should be only number";
                             }
                             return null;
                           },
-                          onSaved: (value) => totalDay = int.parse(value),
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          onSaved: (value) {
+                            setState(() {
+                              totalDay = int.parse(value);
+                            });
+                          },
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -148,10 +189,19 @@ class _SallaryEditState extends State<SallaryEdit> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Rate per day is requierd';
+                        } else if (int.parse(value) < 0) {
+                          return "rate per day should greater than 0";
+                        } else if (int.parse(value).isNaN) {
+                          return "Input should be only number";
                         }
                         return null;
                       },
-                      onSaved: (value) => ratePerDay = int.parse(value),
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
+                      onSaved: (value) {
+                        ratePerDay = int.parse(value);
+                      },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -236,7 +286,9 @@ class _SallaryEditState extends State<SallaryEdit> {
                     controller: postioncontroller,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'position is requierd';
+                        return 'Employee is requierd';
+                      } else if (value.length < 3) {
+                        return "Name must greater than 2 characters";
                       }
                       return null;
                     },
@@ -274,6 +326,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                       border: Border.all(width: 0.80),
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text('$_date'),
                         IconButton(
