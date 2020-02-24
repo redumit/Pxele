@@ -1,7 +1,7 @@
 class ServiceModel {
   int _id;
 
-  String _itemName;
+  String _serviceName;
   String _segment;
   double _laborCost;
   double _otherExpense;
@@ -12,7 +12,7 @@ class ServiceModel {
 
   ServiceModel(
       this._id,
-      this._itemName,
+      this._serviceName,
       this._segment,
       this._laborCost,
       this._otherExpense,
@@ -21,7 +21,7 @@ class ServiceModel {
       this._date,
       this._time);
 
-  String get itemName => _itemName;
+  String get serviceName => _serviceName;
 
   int get id => _id;
 
@@ -29,8 +29,8 @@ class ServiceModel {
     _id = value;
   }
 
-  set itemName(String value) {
-    _itemName = value;
+  set serviceName(String value) {
+    _serviceName = value;
   }
 
   String get segment => _segment;
@@ -78,7 +78,7 @@ class ServiceModel {
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map['id'] = _id;
-    map['itemName'] = _itemName;
+    map['serviceName'] = _serviceName;
     map['segment'] = _segment;
     map['laborCost'] = _laborCost;
     map['expenses'] = _otherExpense;
@@ -90,7 +90,7 @@ class ServiceModel {
 
   ServiceModel.fromMapObject(Map<String, dynamic> map) {
     _id = map['id'];
-    _itemName = map['itemName'];
+    _serviceName = map['serviceName'];
     _segment = map['segment'];
     _laborCost = map['laborCost'];
     _otherExpense = map['expenses'];

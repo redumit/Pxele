@@ -8,7 +8,7 @@ class SalaryHelper {
   static SalaryHelper _helper;
   static Database _database;
 
-  String salaryTable = 'salray_table';
+  String salaryTable = 'salray';
 
   SalaryHelper._createInstance();
   factory SalaryHelper() {
@@ -27,7 +27,7 @@ class SalaryHelper {
 
   Future<Database> initializeDatebase() async {
     Directory directiry = await getApplicationDocumentsDirectory();
-    String path = directiry.path + '/expenses.db';
+    String path = directiry.path + '/expense.db';
 
     var serviceDatabase =
         await openDatabase(path, version: 1, onCreate: _createDb);
@@ -36,15 +36,15 @@ class SalaryHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        "create table $salaryTable(id INTEGER PRIMARY KEY AUTOINCREMENT, empleyeeName TEXT, totalDay INTEGER, ratePerDay INTEGER,"
-        "gender TEXT, position TEXT, date DATE)");
+        "create table $salaryTable(id INTEGER PRIMARY KEY AUTOINCREMENT, employeeName TEXT, totalDay INTEGER, ratePerDay INTEGER,"
+        "gender TEXT, position TEXT, date DATE, totalPayment INTEGER)");
   }
 
   Future<List<Map<String, dynamic>>> getSalaryMapList() async {
     try {
       Database db = await this.database;
 
-      var result = await db.query(salaryTable, orderBy: 'id ASC');
+      var result = await db.query(salaryTable, orderBy: 'id DESC');
       return result;
     } catch (e) {
       print(e);

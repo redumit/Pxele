@@ -1,4 +1,5 @@
 import 'package:expenses/Pages/SallaryEdit.dart';
+import 'package:expenses/Pages/updateSalary.dart';
 import 'package:expenses/databaseHelper/salaryHelper.dart';
 import 'package:expenses/models/salary.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class _SalaryState extends State<Salary> {
   SalaryHelper salaryHelper = new SalaryHelper();
   List<SalaryModel> salaryList;
   int count = 0;
+
+  List<PopupMenuEntry<dynamic>> pops = [];
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +37,20 @@ class _SalaryState extends State<Salary> {
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text("Hagos Berihu"),
-                        Text("5000"),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            salaryList[index].employeeName,
+                            overflow: TextOverflow.clip,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            "5000",
+                            overflow: TextOverflow.clip,
+                          ),
+                        ),
                       ],
                     ),
                     subtitle: Row(
@@ -50,8 +65,13 @@ class _SalaryState extends State<Salary> {
                     ),
                     trailing: CircleAvatar(
                       backgroundColor: Colors.blue,
-                      child:
-                          IconButton(icon: Icon(Icons.edit), onPressed: null),
+                      child: IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    UpdateSalary(salaryList[index])));
+                          }),
                     )),
                 Divider()
               ],
@@ -73,7 +93,7 @@ class _SalaryState extends State<Salary> {
     final Future<Database> dbfuture = salaryHelper.initializeDatebase();
     dbfuture.then((database) {
       Future<List<SalaryModel>> salaryListFuture = salaryHelper.getSalaryMap();
-      salaryListFuture.then((salarylist){
+      salaryListFuture.then((salarylist) {
         setState(() {
           this.salaryList = salarylist;
           this.count = salarylist.length;

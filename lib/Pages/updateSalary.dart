@@ -5,12 +5,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-class SallaryEdit extends StatefulWidget {
+class UpdateSalary extends StatefulWidget {
+  SalaryModel salaryModel;
+  UpdateSalary(this.salaryModel);
   @override
-  _SallaryEditState createState() => _SallaryEditState();
+  _UpdateSalaryState createState() => _UpdateSalaryState(salaryModel);
 }
 
-class _SallaryEditState extends State<SallaryEdit> {
+class _UpdateSalaryState extends State<UpdateSalary> {
+  var _selection;
+  SalaryModel myModel;
+  _UpdateSalaryState(this.myModel);
   final _formkey2 = GlobalKey<FormState>();
   static bool _autoValidate = false;
 
@@ -39,23 +44,30 @@ class _SallaryEditState extends State<SallaryEdit> {
     super.initState();
     totalDaysController.addListener(_totalPayment);
     ratePerDayController.addListener(_totalPayment);
+    _genderGroup = myModel.gender;
+    _date = myModel.date;
+    totalPayment = myModel.totalPayment;
+    empcontroller.text = myModel.employeeName.toString();
+    totalDaysController.text = myModel.totalDay.toString();
+    ratePerDayController.text = myModel.ratePerDay.toString();
+    postioncontroller.text = myModel.position.toString();
   }
 
   //calculate total payment
   void _totalPayment() {
     setState(() {
       try {
-        totalPayment = int.parse(totalDaysController.value.text, radix: 10,
-                onError: (value) {
-              if (value.runtimeType != int) {
-                print("value not string");
-              }
-            }) *
-            int.parse(ratePerDayController.value.text, onError: (value) {
-              if (value.runtimeType != int) {
-                print("value not string");
-              }
-            });
+        totalPayment =
+            int.parse(totalDaysController.value.text, onError: (value) {
+                  if (value.runtimeType != int) {
+                    print("value not string");
+                  }
+                }) *
+                int.parse(ratePerDayController.value.text, onError: (value) {
+                  if (value.runtimeType != int) {
+                    print("value not string");
+                  }
+                });
       } catch (e) {
         debugPrint(e);
       }
@@ -151,6 +163,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                       Container(
                         width: MediaQuery.of(context).size.width / 2.5,
                         child: TextFormField(
+                          // initialValue: myModel.totalDay.toString(),
                           controller: totalDaysController,
                           keyboardType: TextInputType.number,
                           validator: (value) {
@@ -186,6 +199,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                     padding: EdgeInsets.only(left: ScreenUtil().setWidth(10)),
                     width: MediaQuery.of(context).size.width / 2.5,
                     child: TextFormField(
+                      // initialValue: myModel.ratePerDay.toString(),
                       keyboardType: TextInputType.number,
                       controller: ratePerDayController,
                       validator: (value) {
@@ -202,9 +216,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                         WhitelistingTextInputFormatter.digitsOnly
                       ],
                       onSaved: (value) {
-                        setState(() {
-                          ratePerDay = int.parse(value);
-                        });
+                        ratePerDay = int.parse(value);
                       },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -287,6 +299,7 @@ class _SallaryEditState extends State<SallaryEdit> {
                 child: Container(
                   width: MediaQuery.of(context).size.width / 1.6,
                   child: TextFormField(
+                    // initialValue: myModel.position,
                     controller: postioncontroller,
                     validator: (value) {
                       if (value.isEmpty) {
@@ -425,7 +438,7 @@ class _SallaryEditState extends State<SallaryEdit> {
 
   void _submit() async {
     SalaryModel model = new SalaryModel(
-        null,
+        myModel.id,
         empcontroller.text,
         int.parse(totalDaysController.text),
         int.parse(ratePerDayController.text),
@@ -434,8 +447,7 @@ class _SallaryEditState extends State<SallaryEdit> {
         _date,
         totalPayment);
     var db = await SalaryHelper();
-    print(model.toMap());
 
-    print(db.insertSalary(model));
+    print(db.updatSalary(model));
   }
 }
